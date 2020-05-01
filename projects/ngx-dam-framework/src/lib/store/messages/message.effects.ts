@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { ToastOptions, ToastyService } from 'ng2-toasty';
+import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import { tap } from 'rxjs/operators';
 import { MessageType } from '../../models/messages/message.class';
 import { MessagesActions, MessagesActionTypes } from './messages.actions';
@@ -14,36 +14,33 @@ export class MessagesEffects {
   notify$ = this.actions$.pipe(
     ofType(MessagesActionTypes.Notify),
     tap((action) => {
-      const toastOptions: ToastOptions = {
-        title: '',
-        msg: action.payload.message,
-        showClose: action.payload.options.closable,
-        timeout: action.payload.options.timeout,
-        theme: 'default',
+      const toastOptions: Partial<IndividualConfig> = {
+        closeButton: action.payload.options.closable,
+        timeOut: action.payload.options.timeout,
       };
 
       switch (action.payload.status) {
         case MessageType.INFO:
-          this.toastyService.info(toastOptions);
+          this.toastyService.info(action.payload.message, '', toastOptions);
           break;
         case MessageType.SUCCESS:
-          this.toastyService.success(toastOptions);
+          this.toastyService.success(action.payload.message, '', toastOptions);
           break;
         case MessageType.FAILED:
-          this.toastyService.error(toastOptions);
+          this.toastyService.error(action.payload.message, '', toastOptions);
           break;
         case MessageType.WARNING:
-          this.toastyService.warning(toastOptions);
+          this.toastyService.warning(action.payload.message, '', toastOptions);
           break;
         default:
-          this.toastyService.default(toastOptions);
+          this.toastyService.show(action.payload.message, '', toastOptions);
       }
     }),
   );
 
   constructor(
     private actions$: Actions<MessagesActions>,
-    private toastyService: ToastyService,
+    private toastyService: ToastrService,
   ) { }
 
 }

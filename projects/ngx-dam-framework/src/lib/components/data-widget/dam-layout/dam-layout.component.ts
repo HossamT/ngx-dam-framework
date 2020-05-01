@@ -11,26 +11,26 @@ import { DamWidgetComponent } from '../dam-widget/dam-widget.component';
 export class DamLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // --- Templates
-  @ContentChild('alerts')
+  @ContentChild('alerts', { static: false })
   alertsTemplate: TemplateRef<any>;
 
-  @ContentChild('titleBar')
+  @ContentChild('titleBar', { static: false })
   titleBarTemplate: TemplateRef<any>;
 
-  @ContentChild('toolbar')
+  @ContentChild('toolbar', { static: false })
   toolbarTemplate: TemplateRef<any>;
 
-  @ContentChild('activeTitleBar')
+  @ContentChild('activeTitleBar', { static: false })
   activeTitlebarTemplate: TemplateRef<any>;
 
-  @ContentChild('editorContent')
+  @ContentChild('editorContent', { static: false })
   editorContentTemplate: TemplateRef<any>;
 
-  @ContentChild('sideBar')
+  @ContentChild('sideBar', { static: false })
   sideBarTemplate: TemplateRef<any>;
 
   // --- Resize Attributes
-  @ViewChild('resize', { read: ElementRef })
+  @ViewChild('resize', { read: ElementRef, static: true })
   resize: ElementRef;
   dragging: boolean;
   positionX: string;

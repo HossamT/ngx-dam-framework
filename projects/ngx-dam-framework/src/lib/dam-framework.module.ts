@@ -9,7 +9,7 @@ import { EffectsModule } from '@ngrx/effects';
 import * as fromRouter from '@ngrx/router-store';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
-import { ToastyModule } from 'ng2-toasty';
+import { ToastrModule } from 'ngx-toastr';
 import { CardModule } from 'primeng/card';
 import { DamAlertsContainerComponent } from './components/alerts/dam-alerts-container/dam-alerts-container.component';
 import { DamAlertsComponent } from './components/alerts/dam-alerts/dam-alerts.component';
@@ -110,7 +110,7 @@ export class DamRoutingModule {
 })
 export class DamFrameworkModule {
 
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<DamFrameworkModule> {
     return {
       ngModule: DamFrameworkModule,
       providers: [
@@ -132,7 +132,7 @@ export class DamFrameworkModule {
   imports: [
     CommonModule,
     NgbModule,
-    ToastyModule,
+    ToastrModule,
     EffectsModule.forFeature([MessagesEffects]),
     StoreModule.forFeature(fromMessagesSelector.messageFeatureName, fromMessagesReducer.messagesReducer),
   ],
@@ -143,7 +143,7 @@ export class DamFrameworkModule {
 })
 export class DamMessagesModule {
 
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<DamMessagesModule> {
     return {
       ngModule: DamMessagesModule,
       providers: [
@@ -200,7 +200,7 @@ export class DamLoaderModule { }
 })
 export class DamAuthenticationModule {
 
-  static forRoot(urls: IAuthenticationURL): ModuleWithProviders {
+  static forRoot(urls: IAuthenticationURL): ModuleWithProviders<DamAuthenticationModule> {
     return {
       ngModule: DamAuthenticationModule,
       providers: [

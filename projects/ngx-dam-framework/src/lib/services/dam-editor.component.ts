@@ -19,9 +19,9 @@ export abstract class DamAbstractEditorComponent {
   readonly initial$: Observable<any>;
   readonly payload$: Observable<any>;
 
-  @ViewChild('headerControls')
+  @ViewChild('headerControls', { static: false })
   readonly controls: TemplateRef<any>;
-  @ViewChild('headerTitle')
+  @ViewChild('headerTitle', { static: false })
   readonly header: TemplateRef<any>;
 
   constructor(

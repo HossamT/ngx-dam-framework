@@ -2,5 +2,146 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "ngx-dam-framework": {
+      "root": "projects/ngx-dam-framework",
+      "sourceRoot": "projects/ngx-dam-framework/src",
+      "projectType": "library",
+      "prefix": "dam",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ngx-dam-framework/tsconfig.lib.json",
+            "project": "projects/ngx-dam-framework/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-dam-framework/src/test.ts",
+            "tsConfig": "projects/ngx-dam-framework/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-dam-framework/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ngx-dam-framework/tsconfig.lib.json",
+              "projects/ngx-dam-framework/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "demo-dam-framework": {
+      "root": "projects/demo-dam-framework/",
+      "sourceRoot": "projects/demo-dam-framework/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/demo-dam-framework",
+            "index": "projects/demo-dam-framework/src/index.html",
+            "main": "projects/demo-dam-framework/src/main.ts",
+            "polyfills": "projects/demo-dam-framework/src/polyfills.ts",
+            "tsConfig": "projects/demo-dam-framework/tsconfig.app.json",
+            "assets": [
+              "projects/demo-dam-framework/src/favicon.ico",
+              "projects/demo-dam-framework/src/assets"
+            ],
+            "styles": [
+              "projects/demo-dam-framework/src/styles.css",
+              "node_modules/ng2-toasty/style-default.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/primeng/resources/themes/nova-light/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/font-awesome/css/font-awesome.min.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/demo-dam-framework/src/environments/environment.ts",
+                  "with": "projects/demo-dam-framework/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "demo-dam-framework:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "demo-dam-framework:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "demo-dam-framework:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/demo-dam-framework/src/test.ts",
+            "polyfills": "projects/demo-dam-framework/src/polyfills.ts",
+            "tsConfig": "projects/demo-dam-framework/tsconfig.spec.json",
+            "karmaConfig": "projects/demo-dam-framework/karma.conf.js",
+            "styles": [
+              "projects/demo-dam-framework/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/demo-dam-framework/src/favicon.ico",
+              "projects/demo-dam-framework/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/demo-dam-framework/tsconfig.app.json",
+              "projects/demo-dam-framework/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ngx-dam-framework"
 }

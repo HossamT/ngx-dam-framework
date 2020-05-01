@@ -16,6 +16,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-dam-framework": [
+        "dist/ngx-dam-framework"
+      ],
+      "ngx-dam-framework/*": [
+        "dist/ngx-dam-framework/*"
+      ]
+    }
   }
 }

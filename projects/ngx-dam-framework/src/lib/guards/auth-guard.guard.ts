@@ -7,9 +7,7 @@ import { IAuthenticationState } from '../models/authentication/state';
 import { AuthenticationService } from '../services/authentication.service';
 import * as fromAuth from '../store/authentication/index';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthenticatedGuard implements CanActivate {
   constructor(
     private store: Store<IAuthenticationState>,

@@ -1,0 +1,37 @@
+.side-bar {
+  display: grid;
+  grid-gap: 2px;
+  grid-template-columns: [bar] 1fr;
+  grid-template-rows: [row-buttons] minmax(min-content, 40px) [row-filter] minmax(min-content, 40px)  [row-container] auto;
+  overflow: hidden;
+  color: #444;
+  height: 100%;
+  background-color: #d6d6d6e3;
+}
+
+.buttons {
+  grid-column: 1;
+  grid-row: row-buttons;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+.filter {
+  grid-column: 1;
+  grid-row: row-filter;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  grid-column: 1;
+  grid-row: row-container;
+  background-color: white;
+  overflow: scroll;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

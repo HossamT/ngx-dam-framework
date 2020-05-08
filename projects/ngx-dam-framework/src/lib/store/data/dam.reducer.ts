@@ -1,4 +1,4 @@
-import { createEntityAdapter } from '@ngrx/entity';
+import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { emptyRepository, ICollections, IDamResource } from '../../models/data/repository';
 import { emptyDataModel, IDamDataModel } from '../../models/data/state';
 import { emptyWorkspace } from '../../models/data/workspace';
@@ -183,22 +183,26 @@ export function reducer(state = initialState, action: DamActions): IDamDataModel
         },
       };
 
-    case DamActionTypes.LoadResourcesInRepostory:
-      const collections: ICollections = state.repository.collections;
+    case DamActionTypes.LoadResourcesInRepository:
+      const loaded: ICollections = {};
       action.payload.collections.forEach((value) => {
-        collections[value.key] = repositoryAdapter.addAll(value.values, repositoryAdapter.getInitialState());
+        loaded[value.key] = repositoryAdapter.setAll(value.values, repositoryAdapter.getInitialState());
       });
 
       return {
         ...state,
         repository: {
-          collections,
+          collections: {
+            ...state.repository.collections,
+            ...loaded,
+          },
         },
       };
 
-    case DamActionTypes.InsertResourcesInRepostory:
+    case DamActionTypes.InsertResourcesInRepository:
+      const inserted: ICollections = {};
       action.payload.collections.forEach((value) => {
-        current[value.key] = repositoryAdapter.upsertMany(
+        inserted[value.key] = repositoryAdapter.upsertMany(
           value.values,
           current[value.key] ? current[value.key] : repositoryAdapter.getInitialState(),
         );
@@ -207,19 +211,59 @@ export function reducer(state = initialState, action: DamActions): IDamDataModel
       return {
         ...state,
         repository: {
-          collections: current,
+          collections: {
+            ...state.repository.collections,
+            ...inserted,
+          },
         },
       };
 
-    case DamActionTypes.DeleteResourcesFromRepostory:
+    case DamActionTypes.InsertResourcesInCollection:
+      const insertedSingle: EntityState<IDamResource> = repositoryAdapter.upsertMany(
+        action.payload.values,
+        current[action.payload.key] ? current[action.payload.key] : repositoryAdapter.getInitialState());
+
+
+      return {
+        ...state,
+        repository: {
+          collections: {
+            ...state.repository.collections,
+            [action.payload.key]: insertedSingle,
+          },
+        },
+      };
+
+
+    case DamActionTypes.DeleteResourcesFromRepository:
+      const deleted: ICollections = {};
       action.payload.collections.forEach((value) => {
-        current[value.key] = repositoryAdapter.removeMany(value.values, current[value.key]);
+        deleted[value.key] = repositoryAdapter.removeMany(value.values, current[value.key]);
       });
 
       return {
         ...state,
         repository: {
-          collections: current,
+          collections: {
+            ...state.repository.collections,
+            ...deleted,
+          },
+        },
+      };
+
+    case DamActionTypes.DeleteResourcesFromCollection:
+      const deletedCollection: EntityState<IDamResource> = repositoryAdapter.removeMany(
+        action.payload.values,
+        current[action.payload.key],
+      );
+
+      return {
+        ...state,
+        repository: {
+          collections: {
+            ...state.repository.collections,
+            [action.payload.key]: deletedCollection,
+          },
         },
       };
 

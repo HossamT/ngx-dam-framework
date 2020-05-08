@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,6 +8,7 @@ import * as fromDAMF from '../../../store/data/dam.actions';
 import * as fromDAMFSelector from '../../../store/data/dam.selectors';
 import { selecIsSideBarCollaped, selectIsFullScreen, selectWidgetId } from '../../../store/data/dam.selectors';
 import { ConfirmDialogComponent } from '../../fragments/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export abstract class DamWidgetComponent {
 

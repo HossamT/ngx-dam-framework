@@ -26,6 +26,7 @@ export class EditorActivateGuard implements CanActivate {
     // Get Necessary parameters from Route DATA
     const editorMetadata: IEditorMetadata = route.data['editorMetadata'];
     const elementId: string = route.data['idKey'];
+    const redirectTo: string[] = route.data['redirectTo'] || [];
     const EditorAction: CoreType<Action> = route.data['action'];
 
     console.log('EDITOR CAN ACTIVATE ' + editorMetadata.id);
@@ -75,7 +76,7 @@ export class EditorActivateGuard implements CanActivate {
               if (result) {
                 return true;
               } else {
-                return this.router.createUrlTree(['ig', 'error']);
+                return this.router.createUrlTree(redirectTo);
               }
             }),
           );

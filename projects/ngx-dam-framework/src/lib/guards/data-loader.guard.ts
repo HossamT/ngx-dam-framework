@@ -6,9 +6,7 @@ import { Action, Store } from '@ngrx/store';
 import { Observable, of, ReplaySubject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class DataLoaderGuard implements CanActivate {
 
   constructor(

@@ -19,9 +19,7 @@ export interface IAuthenticationURL {
   loginSuccessRedirectUrl: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthenticationService {
 
   constructor(
@@ -64,7 +62,7 @@ export class AuthenticationService {
     return this.http.get<User>(this.authConfig.api.checkAuthStatus);
   }
 
-  logout(): Observable<void> {
-    return this.http.get<void>(this.authConfig.api.logout);
+  logout(): Observable<Message<any>> {
+    return this.http.get<Message<any>>(this.authConfig.api.logout);
   }
 }

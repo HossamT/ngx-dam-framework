@@ -1,0 +1,21 @@
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+/* You can add global styles to this file, and also import other style files */
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  font-family: Verdana, Geneva, sans-serif !important;
+}
+
+.progress-color .mat-progress-bar-fill::after {
+  background-color: #be1600 !important;
+}
+
+.progress-color .mat-progress-bar-buffer {
+  background-color: grey !important;
+}

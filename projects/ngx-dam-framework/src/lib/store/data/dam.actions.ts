@@ -24,9 +24,11 @@ export enum DamActionTypes {
   SetValue = '[DAMF State] Set State Value',
   LoadForRouteSuccess = '[DAMF Route] Load Data For Route Success',
   LoadForRouteFailure = '[DAMF Route] Load Data For Route Failure',
-  LoadResourcesInRepostory = '[DAMF Repository] Load Resources In Repository',
-  InsertResourcesInRepostory = '[DAMF Repository] Insert Resources In Repository',
-  DeleteResourcesFromRepostory = '[DAMF Repository] Delete Resources From Repository',
+  LoadResourcesInRepository = '[DAMF Repository] Load Resources In Repository',
+  InsertResourcesInRepository = '[DAMF Repository] Insert Resources In Repository',
+  InsertResourcesInCollection = '[DAMF Repository] Insert Resources In Collection',
+  DeleteResourcesFromRepository = '[DAMF Repository] Delete Resources From Repository',
+  DeleteResourcesFromCollection = '[DAMF Repository] Delete Resources From Collection',
   ClearRepository = '[DAMF Repository] Clear Repository',
   CollapseSideBar = '[DAMF Layout] Collapse Side Bar',
   ExpandSideBar = '[DAMF Layout] Expand Side Bar',
@@ -179,36 +181,54 @@ export class SetValue implements Action {
   constructor(readonly payload: any) { }
 }
 
-export class LoadResourcesInRepostory implements Action {
-  readonly type = DamActionTypes.LoadResourcesInRepostory;
+export class LoadResourcesInRepository<T extends IDamResource> implements Action {
+  readonly type = DamActionTypes.LoadResourcesInRepository;
 
   constructor(readonly payload: {
-    collections: Array<{
+    collections: {
       key: string,
-      values: IDamResource[],
-    }>,
+      values: T[],
+    }[],
   }) { }
 }
 
-export class InsertResourcesInRepostory implements Action {
-  readonly type = DamActionTypes.InsertResourcesInRepostory;
+export class InsertResourcesInRepository<T extends IDamResource> implements Action {
+  readonly type = DamActionTypes.InsertResourcesInRepository;
 
   constructor(readonly payload: {
-    collections: Array<{
+    collections: {
       key: string,
-      values: IDamResource[],
-    }>,
+      values: T[],
+    }[],
   }) { }
 }
 
-export class DeleteResourcesFromRepostory implements Action {
-  readonly type = DamActionTypes.DeleteResourcesFromRepostory;
+export class InsertResourcesInCollection<T extends IDamResource> implements Action {
+  readonly type = DamActionTypes.InsertResourcesInCollection;
 
   constructor(readonly payload: {
-    collections: Array<{
+    key: string,
+    values: T[]
+  }) { }
+}
+
+export class DeleteResourcesFromRepository implements Action {
+  readonly type = DamActionTypes.DeleteResourcesFromRepository;
+
+  constructor(readonly payload: {
+    collections: {
       key: string,
       values: string[],
-    }>,
+    }[],
+  }) { }
+}
+
+export class DeleteResourcesFromCollection implements Action {
+  readonly type = DamActionTypes.DeleteResourcesFromCollection;
+
+  constructor(readonly payload: {
+    key: string,
+    values: string[],
   }) { }
 }
 
@@ -275,13 +295,15 @@ export type DamActions =
   EditorUpdate |
   UpdateActiveResource |
   SetValue |
-  LoadResourcesInRepostory |
-  InsertResourcesInRepostory |
+  LoadResourcesInRepository<IDamResource> |
+  InsertResourcesInRepository<IDamResource> |
+  InsertResourcesInCollection<IDamResource> |
+  DeleteResourcesFromCollection |
   ClearRepository |
   LoadForRouteSuccess |
   GlobalSave |
   LoadForRouteFailure |
   CollapseSideBar |
   ExpandSideBar |
-  DeleteResourcesFromRepostory |
+  DeleteResourcesFromRepository |
   ToggleFullScreen;

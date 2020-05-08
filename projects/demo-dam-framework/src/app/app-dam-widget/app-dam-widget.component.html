@@ -1,14 +1,21 @@
-<dam-layout>
+<dam-layout *ngIf="blog$ | async as blog">
 
   <ng-template #alerts>
     <dam-alerts-container></dam-alerts-container>
   </ng-template>
 
   <ng-template #titleBar>
-    <dam-fullscreen-button></dam-fullscreen-button>
+    <h5 style="margin-bottom: 0; margin-left: 5px;">{{blog.name}}</h5>
   </ng-template>
 
   <ng-template #toolbar>
+    <div>
+      <dam-fullscreen-button></dam-fullscreen-button>
+    </div>
+    <div>
+      <dam-reset-button></dam-reset-button>
+      <dam-save-button></dam-save-button>
+    </div>
   </ng-template>
 
   <ng-template #activeTitleBar>
@@ -19,7 +26,23 @@
   </ng-template>
 
   <ng-template #sideBar>
-    <dam-side-bar-toggle></dam-side-bar-toggle>
+    <div *ngIf="posts$ | async as posts" class="side-bar">
+      <div class="buttons">
+        <dam-side-bar-toggle></dam-side-bar-toggle>
+      </div>
+      <div class="filter">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-filter"></i></span>
+          </div>
+          <input type="text" class="form-control" placeholder="filter" aria-label="filter">
+        </div>
+      </div>
+      <div class="content">
+        <ul class="list-group" style="height: 1000px; background-color: green;">
+          <li class="list-group-item cursor-pointer" *ngFor="let post of posts" [routerLink]="'post/' + post.id" routerLinkActive="active"> {{ post.title }}</li>
+        </ul>
+      </div>
+    </div>
   </ng-template>
-
 </dam-layout>

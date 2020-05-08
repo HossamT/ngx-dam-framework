@@ -28,7 +28,7 @@ export class RxjsStoreHelperService {
     );
   }
 
-  static forkJoin<T>(sources: Array<ObservableInput<T>>): Observable<T[]> {
+  static forkJoin<T>(sources: ObservableInput<T>[]): Observable<T[]> {
     if (sources && sources.length > 0) {
       return forkJoin(sources);
     } else {
@@ -38,7 +38,7 @@ export class RxjsStoreHelperService {
 
   constructor(private messageService: MessageService) { }
 
-  static actionChain(actions$: Observable<Action>, store: Store<any>, endWith: Action, chain: Array<{ send: Action, listen: string }>) {
+  static actionChain(actions$: Observable<Action>, store: Store<any>, endWith: Action, chain: { send: Action, listen: string }[]) {
     if (chain && chain.length > 0) {
       store.dispatch(chain[0].send);
       this.listenAndReact(actions$, {

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -47,6 +47,9 @@ import { MessagesEffects } from './store/messages/message.effects';
 import * as fromMessagesReducer from './store/messages/messages.reducer';
 import * as fromMessagesSelector from './store/messages/messages.selectors';
 import * as fromRouterSelector from './store/router/router.selectors';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { BlockUIModule } from 'ng-block-ui';
+import { DamMainComponent } from './components/data-widget/main/main.component';
 
 @NgModule({
   declarations: [
@@ -91,11 +94,14 @@ export class DamRoutingModule {
     DamFullscreenButtonComponent,
     DamSideBarToggleComponent,
     DamWidgetContainerComponent,
+    DamMainComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
+    MatProgressBarModule,
     DamComponentsModule,
+    BlockUIModule,
     StoreModule.forFeature(fromDataSelector.featureName, fromDataReducer.reducer),
   ],
   exports: [
@@ -106,6 +112,7 @@ export class DamRoutingModule {
     DamFullscreenButtonComponent,
     DamSideBarToggleComponent,
     DamWidgetContainerComponent,
+    DamMainComponent,
   ],
 })
 export class DamFrameworkModule {
@@ -200,7 +207,7 @@ export class DamLoaderModule { }
 })
 export class DamAuthenticationModule {
 
-  static forRoot(urls: IAuthenticationURL): ModuleWithProviders<DamAuthenticationModule> {
+  static forRootUsingUrl(urls: IAuthenticationURL): ModuleWithProviders<DamAuthenticationModule> {
     return {
       ngModule: DamAuthenticationModule,
       providers: [
@@ -210,6 +217,20 @@ export class DamAuthenticationModule {
         NotAuthenticatedGuard,
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: DAM_AUTH_CONFIG, useValue: urls },
+      ],
+    };
+  }
+
+  static forRootUsingService<T extends AuthenticationService>(service: Type<T>): ModuleWithProviders<DamAuthenticationModule> {
+    return {
+      ngModule: DamAuthenticationModule,
+      providers: [
+        { provide: AuthenticationService, useClass: service },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: DAM_AUTH_CONFIG, useValue: {} },
+        NewPasswordResolver,
+        AuthenticatedGuard,
+        NotAuthenticatedGuard,
       ],
     };
   }

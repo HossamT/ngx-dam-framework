@@ -1,6 +1,6 @@
 import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Observable, throwError } from 'rxjs';
 import { catchError, flatMap, take } from 'rxjs/operators';
@@ -45,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
               const dialogRef = this.dialog.open(TimeoutLoginDialogComponent, { disableClose: true });
               return dialogRef.afterClosed().pipe(
-                flatMap((result) => {
+                flatMap((result: { username: string, password: string }) => {
                   if (result) {
                     return this.auth.login(result.username, result.password).pipe(
                       flatMap((message) => {

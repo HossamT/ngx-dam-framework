@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>
+<dam-main>
+  <ng-template #header>
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="#" [routerLink]="'home'">Data Management And Authoring Framework Demo</a>
+      <button class="btn btn-sm btn-danger" *ngIf="isLoggedIn$ | async" (click)="logout()">
+        <span style="color: greenyellow;">
+          <i class="fa fa-user"></i>
+          {{ username$ | async }}
+        </span>
+        Logout
+      </button>
+      <button class="btn btn-sm btn-primary" [routerLink]="'login'" *ngIf="!(isLoggedIn$ | async)">Login</button>
+    </nav>
+  </ng-template>
+  <ng-template #footer>
+    FOOTER
+  </ng-template>
+</dam-main>

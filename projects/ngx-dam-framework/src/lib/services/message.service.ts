@@ -4,9 +4,7 @@ import { DEFAULT_MESSAGE_OPTION } from '../injection-token';
 import { IUserMessageOptions, Message, MessageType, UserMessage } from '../models/messages/message.class';
 import { AddMessage, Notify } from '../store/messages/messages.actions';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MessageService {
 
   constructor(@Inject(DEFAULT_MESSAGE_OPTION) private defaultOptions: IUserMessageOptions) {

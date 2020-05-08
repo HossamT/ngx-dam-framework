@@ -25,10 +25,10 @@ export class EditorDeactivateGuard implements CanDeactivate<DamAbstractEditorCom
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot,
   ) {
-    return combineLatest(
+    return combineLatest([
       this.store.select(selectWorkspaceCurrentIsChanged),
       this.store.select(selectWorkspaceCurrentIsValid),
-    ).pipe(
+    ]).pipe(
       take(1),
       concatMap(([editorChanged, editorValid]) => {
         if (!editorValid) {

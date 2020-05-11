@@ -2,12 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
-import { forkJoin, Observable, ObservableInput, of } from 'rxjs';
-import { filter, flatMap, mergeMap, take } from 'rxjs/operators';
-import { Message, UserMessage } from '../models/messages/message.class';
+import { forkJoin, Observable, ObservableInput, of, from, Subject } from 'rxjs';
+import { filter, flatMap, mergeMap, take, catchError, toArray, tap } from 'rxjs/operators';
+import { Message, UserMessage, IUserMessageOptions } from '../models/messages/message.class';
 import * as fromDAM from '../store/index';
 import { ClearAll } from '../store/messages/messages.actions';
 import { MessageService } from './message.service';
+import { TurnOnLoader, TurnOffLoader } from '../store/loader/loader.actions';
 
 // @dynamic
 @Injectable({
@@ -52,6 +53,54 @@ export class RxjsStoreHelperService {
     } else {
       store.dispatch(endWith);
     }
+  }
+
+  // tslint:disable-next-line: cognitive-complexity
+  getMessageAndHandle<T>(
+    store: Store<any>,
+    call: () => Observable<Message<T>>,
+    success: (message: Message<T>) => Action[],
+    error?: (error) => Action[],
+    messageSubject?: Subject<Message<T>>,
+    options?: {
+      loader: boolean,
+      blockUI: boolean,
+      messageOptions: IUserMessageOptions,
+    }) {
+
+    if (options && options.loader || !options) {
+      store.dispatch(new TurnOnLoader({
+        blockUI: options ? options.blockUI : true,
+      }));
+    }
+    return call().pipe(
+      flatMap((message) => {
+        if (messageSubject && !messageSubject.closed) {
+          messageSubject.next(message);
+          messageSubject.complete();
+        }
+        return [
+          ...success(message),
+          this.messageService.messageToAction(message, options ? options.messageOptions : undefined),
+        ];
+      }),
+      catchError((e) => {
+        messageSubject.error(e);
+        return from([
+          ...error ? error(e) : [],
+          this.messageService.actionFromError(e, options ? options.messageOptions : undefined)
+        ]);
+      }),
+      tap((action) => store.dispatch(action)),
+      toArray(),
+      flatMap((actions) => {
+        return [
+          ...actions,
+          ...options && options.loader || !options ? [new TurnOffLoader()] : [],
+        ];
+      }),
+      tap((action) => store.dispatch(action)),
+    );
   }
 
   finalize<E extends any, T extends Messageable = Message>(options: IFinalize<E, T>):

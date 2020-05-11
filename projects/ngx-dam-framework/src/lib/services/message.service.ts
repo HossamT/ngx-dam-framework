@@ -50,11 +50,15 @@ export class MessageService {
   }
 
   userMessageToAction(userMessage: UserMessage): Notify | AddMessage {
-    if (userMessage.status === MessageType.SUCCESS) {
+    if (userMessage.status === MessageType.SUCCESS && !this.hasOption(userMessage, 'persistSuccess')) {
       return new Notify(this.mergeUserMessage(userMessage));
     } else {
       return new AddMessage(this.mergeUserMessage(userMessage));
     }
+  }
+
+  hasOption(userMessage: UserMessage, key: keyof IUserMessageOptions) {
+    return userMessage.options && userMessage.options[key];
   }
 
   mergeUserMessage(userMessage: UserMessage): UserMessage {

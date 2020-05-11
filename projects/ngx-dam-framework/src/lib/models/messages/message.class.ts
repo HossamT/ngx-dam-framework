@@ -27,6 +27,7 @@ export class UserMessage<T = any> {
 export interface IUserMessageOptions {
   closable?: boolean;
   timeout?: number;
+  persistSuccess?: boolean;
   template?: TemplateRef<any>;
 }
 

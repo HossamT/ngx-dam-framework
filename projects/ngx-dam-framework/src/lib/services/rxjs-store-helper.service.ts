@@ -61,7 +61,6 @@ export class RxjsStoreHelperService {
     call: () => Observable<Message<T>>,
     success: (message: Message<T>) => Action[],
     error?: (error) => Action[],
-    messageSubject?: Subject<Message<T>>,
     options?: {
       loader: boolean,
       blockUI: boolean,
@@ -75,23 +74,17 @@ export class RxjsStoreHelperService {
     }
     return call().pipe(
       flatMap((message) => {
-        if (messageSubject && !messageSubject.closed) {
-          messageSubject.next(message);
-          messageSubject.complete();
-        }
         return [
           ...success(message),
           this.messageService.messageToAction(message, options ? options.messageOptions : undefined),
         ];
       }),
       catchError((e) => {
-        messageSubject.error(e);
         return from([
           ...error ? error(e) : [],
           this.messageService.actionFromError(e, options ? options.messageOptions : undefined)
         ]);
       }),
-      tap((action) => store.dispatch(action)),
       toArray(),
       flatMap((actions) => {
         return [

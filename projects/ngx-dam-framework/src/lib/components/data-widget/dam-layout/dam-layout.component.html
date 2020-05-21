@@ -17,18 +17,22 @@
         }"
     >
 
-      <div class="container-section">
+      <div [ngClass]="{
+        'container-section-all' : custom.titlebar && custom.titlebar,
+        'container-section-toolbar' : custom.toolbar && !custom.titlebar,
+        'container-section-none' : !custom.toolbar && !custom.titlebar
+      }">
 
-        <div class="toolbar-controls" >
+        <div class="toolbar-controls" *ngIf="custom.toolbar" >
           <!-- TOOLBAR -->
           <ng-container *ngTemplateOutlet="toolbarTemplate; context: { }" ></ng-container>
         </div>
-        <div class="titlebar-content">
+        <div class="titlebar-content" *ngIf="custom.titlebar">
           <!-- ACTIVE TITLEBAR -->
           <ng-container *ngTemplateOutlet="activeTitlebarTemplate; context: { }" ></ng-container>
         </div>
 
-        <div class="container-content">
+        <div [class]="'container-content ' + (contentClass ? contentClass : '')">
           <!-- EDITOR CONTENT -->
           <ng-container *ngTemplateOutlet="editorContentTemplate; context: { }" ></ng-container>
         </div>

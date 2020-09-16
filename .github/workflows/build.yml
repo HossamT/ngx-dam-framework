@@ -31,4 +31,5 @@ jobs:
 
       - name: npm run build
         run: |
+          npm install -g @angular/cli
           npm run build

@@ -19,7 +19,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v1
         with:
-          path: ~/.npm
+          path: ~/.node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -28,8 +28,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: npm run build
+          
+      - name: Install Dependencies
         run: |
-          npm install -g @angular/cli
+          npm install
+
+      - name: Build Project
+        run: |
           npm run build

@@ -1,3 +1,21 @@
-<div style="height: 1000px; background-color: aqua;">
 
-</div>
+<button class="btn btn-danger" (click)="alert('FAILED')">
+  Make Error Alert
+</button>
+<br>
+<br>
+<button class="btn btn-warning" (click)="alert('WARNING')">
+  Make Warning Alert
+</button>
+<br>
+<br>
+<button class="btn btn-info" (click)="alert('INFO')">
+  Make Info Alert
+</button>
+<br>
+<br>
+<input type="checkbox" [(ngModel)]="persist"> Persist Success ?
+<br>
+<button class="btn btn-success" (click)="alert('SUCCESS')">
+  Make Success Notification
+</button>

@@ -29,6 +29,8 @@ import {
 } from 'ngx-dam-framework';
 import { PostEditorComponent } from './post-editor/post-editor.component';
 import { DamRoutingModule } from '../../../ngx-dam-framework/src/lib/dam-framework.module';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -41,9 +43,11 @@ import { DamRoutingModule } from '../../../ngx-dam-framework/src/lib/dam-framewo
     BrowserModule,
     CommonModule,
     HttpClientModule,
+    FormsModule,
     DamLoaderModule,
     DamFrameworkModule.forRoot(),
     DamMessagesModule.forRoot(),
+    BrowserAnimationsModule,
     DamAuthenticationModule.forRootUsingService(AuthenticationMockService),
     RouterModule.forRoot([
       {

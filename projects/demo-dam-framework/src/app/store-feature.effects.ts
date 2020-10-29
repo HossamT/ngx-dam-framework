@@ -4,11 +4,12 @@ import { flatMap, map, take } from 'rxjs/operators';
 import { DamWidgetEffect } from 'ngx-dam-framework';
 import { APP_WIDGET_ID } from './app-dam-widget/app-dam-widget.component';
 import { LoadStoreFeatureSuccess, StoreFeatureActions, StoreFeatureActionTypes, OpenPostEditor } from './store-feature.actions';
-import { LoadPayloadData, LoadResourcesInRepostory } from 'ngx-dam-framework';
+import { LoadPayloadData } from 'ngx-dam-framework';
 import { IPost } from './blog.model';
 import { OpenEditor } from 'ngx-dam-framework';
 import { Store } from '@ngrx/store';
 import { selectPostById } from './store-feature.selectors';
+import { LoadResourcesInRepository } from '../../../ngx-dam-framework/src/lib/store/data/dam.actions';
 
 @Injectable()
 export class StoreFeatureEffects extends DamWidgetEffect {
@@ -31,7 +32,7 @@ export class StoreFeatureEffects extends DamWidgetEffect {
             }
           ]
         }),
-        new LoadResourcesInRepostory<IPost>({
+        new LoadResourcesInRepository<IPost>({
           collections: [{
             key: 'posts',
             values: [

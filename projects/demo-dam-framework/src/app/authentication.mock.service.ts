@@ -2,11 +2,11 @@ import { AuthenticationService } from 'ngx-dam-framework';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Message } from 'ngx-dam-framework';
 import { MessageType } from '../../../ngx-dam-framework/src/lib/models/messages/message.class';
-import { User } from '../../../ngx-dam-framework/src/lib/models/authentication/user.class';
 import { of, Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { StorageMap } from '@ngx-pwa/local-storage';
 import { flatMap } from 'rxjs/operators';
+import { IDamUser } from '../../../ngx-dam-framework/src/lib/models/authentication/user.class';
 
 @Injectable()
 export class AuthenticationMockService extends AuthenticationService {
@@ -29,8 +29,12 @@ export class AuthenticationMockService extends AuthenticationService {
     return '/widget';
   }
 
-  login(username: string, password: string): Observable<Message<User>> {
-    const user = new User(username, []);
+  getForgotPasswordUrl(): string {
+    return '/home';
+  }
+
+  login(username: string, password: string): Observable<Message<any>> {
+    const user = { username };
     this.storage.set('user', user).subscribe();
     this.storage.set('loggedIn', true).subscribe();
     return of(new Message(MessageType.SUCCESS, 'Login Success', user));
@@ -48,11 +52,11 @@ export class AuthenticationMockService extends AuthenticationService {
     throw new Error(this.fni);
   }
 
-  checkAuthStatus(): Observable<User> {
+  checkAuthStatus(): Observable<any> {
     return this.storage.get('loggedIn').pipe(
       flatMap((value) => {
         if (value) {
-          return this.storage.get<User>('user') as Observable<User>;
+          return this.storage.get<IDamUser>('user') as Observable<IDamUser>;
         } else {
           return throwError(new HttpErrorResponse({
             status: 403,

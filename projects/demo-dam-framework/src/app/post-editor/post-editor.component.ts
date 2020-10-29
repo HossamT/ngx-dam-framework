@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { DamAbstractEditorComponent, EditorSave } from 'ngx-dam-framework';
 import { Actions } from '@ngrx/effects';
 import { Store, Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
+import { MessageService } from 'ngx-dam-framework';
+import { UserMessage } from 'projects/ngx-dam-framework/src/public_api';
 
 @Component({
   selector: 'app-post-editor',
@@ -11,7 +13,8 @@ import { Observable } from 'rxjs';
 })
 export class PostEditorComponent extends DamAbstractEditorComponent {
 
-  constructor(actions$: Actions, store: Store<any>) {
+  persist = false;
+  constructor(actions$: Actions, store: Store<any>, private messageService: MessageService) {
     super({
       id: 'POST_EDITOR',
       title: 'Post Content',
@@ -20,15 +23,24 @@ export class PostEditorComponent extends DamAbstractEditorComponent {
       store);
   }
 
+  alert(type) {
+    this.store.dispatch(
+      this.messageService.userMessageToAction(new UserMessage(type, 'Alert!', null, {
+        persistSuccess: this.persist,
+      })),
+    );
+  }
+
   onEditorSave(action: EditorSave): Observable<Action> {
-    // tslint:disable-next-line: no-duplicate-string
-    throw new Error('Method not implemented.');
+    console.error('Method not implemented.');
+    return EMPTY;
   }
   editorDisplayNode(): Observable<any> {
-    throw new Error('Method not implemented.');
+    console.error('Method not implemented.');
+    return EMPTY;
   }
+
   onDeactivate(): void {
-    throw new Error('Method not implemented.');
   }
 
 }

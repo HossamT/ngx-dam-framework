@@ -12,8 +12,6 @@ export class WidgetSetupGuard implements CanActivate {
     private store: Store<any>) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
-    console.log('CAN ACTIVATE Widget Setup [' + route.data.widgetId + ']');
-
     // Get Necessary parameters from Route DATA
     const widgetId: string = route.data.widgetId;
 

@@ -33,7 +33,6 @@ export class AppDamWidgetComponent extends DamWidgetComponent implements OnInit 
       flatMap((blog: IBlog) => {
         const obs = blog.posts.map(postLink => {
           return this.store.select(selectPostById, { id: postLink.id }).pipe(
-            tap((x) => console.log(x)),
             filter((a) => !!a),
             take(1));
         });

@@ -1,8 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Action } from '@ngrx/store';
 import { IAuthenticationState } from '../../models/authentication/state';
-import { User } from '../../models/authentication/user.class';
-import { Message } from '../../models/messages/message.class';
+import { IDamUser } from '../../models/authentication/user.class';
 
 export enum AuthenticationActionTypes {
   BootstrapCheckAuthStatus = '[DAMF Bootstrap Authentication] Check Authentication Status',
@@ -17,14 +16,6 @@ export enum AuthenticationActionTypes {
   LogoutSuccess = '[DAMF Authentication] Logout Success',
 
   UpdateAuthStatus = '[DAMF Authentication] Update Authentication Status',
-
-  ResetPasswordRequest = '[DAMF ResetPasswordRequest Page] Reset Password Request',
-  ResetPasswordRequestSuccess = '[DAMF ResetPasswordRequest Page] Reset Password Request Sucess',
-  ResetPasswordRequestFailure = '[DAMF ResetPasswordRequest Page] Reset Password Request Failure',
-
-  UpdatePasswordRequest = '[DAMF New Password Page] Update Password  Request',
-  UpdatePasswordRequestSuccess = '[DAMF New Password Page] Update Password  Request Success',
-  UpdatePasswordRequestFailure = '[DAMF New Password Page] Update Password  Request Failure',
 }
 
 // [Bootstrap Authentication] Check Authentication Status, dispatched when bootstrapping the app to check the user's authentication status
@@ -49,7 +40,7 @@ export class LoginPageRequest implements Action {
 export class LoginSuccess implements Action {
   readonly type = AuthenticationActionTypes.LoginSuccess;
 
-  constructor(readonly payload: User) {
+  constructor(readonly payload: IDamUser) {
   }
 }
 
@@ -87,54 +78,6 @@ export class UpdateAuthStatus implements Action {
   }
 }
 
-export class ResetPasswordRequest implements Action {
-  readonly type = AuthenticationActionTypes.ResetPasswordRequest;
-
-  constructor(readonly payload: string) {
-  }
-}
-
-export class ResetPasswordRequestSuccess implements Action {
-  readonly type = AuthenticationActionTypes.ResetPasswordRequestSuccess;
-
-  constructor(readonly payload: Message<string>) {
-  }
-}
-
-export class ResetPasswordRequestFailure implements Action {
-  readonly type = AuthenticationActionTypes.ResetPasswordRequestFailure;
-
-  constructor(readonly payload: HttpErrorResponse) {
-  }
-}
-
-export class UpdatePasswordRequest implements Action {
-  readonly type = AuthenticationActionTypes.UpdatePasswordRequest;
-
-  constructor(readonly payload: {
-    token: string,
-    password: string,
-  }) {
-  }
-}
-
-export class UpdatePasswordRequestSuccess implements Action {
-  readonly type = AuthenticationActionTypes.UpdatePasswordRequestSuccess;
-
-  constructor(readonly payload: Message<string>) {
-  }
-
-}
-
-export class UpdatePasswordRequestFailure implements Action {
-  readonly type = AuthenticationActionTypes.UpdatePasswordRequestFailure;
-
-  constructor(readonly payload: HttpErrorResponse) {
-  }
-}
-
 export type AuthenticationActions = BootstrapCheckAuthStatus | LoginPageRequest
   | LoginSuccess | LoginFailure | UnauthorizedRequest
-  | LogoutRequest | LogoutSuccess | UpdateAuthStatus
-  | ResetPasswordRequest | ResetPasswordRequestSuccess | ResetPasswordRequestFailure
-  | UpdatePasswordRequest | UpdatePasswordRequestSuccess | UpdatePasswordRequestFailure;
+  | LogoutRequest | LogoutSuccess | UpdateAuthStatus;

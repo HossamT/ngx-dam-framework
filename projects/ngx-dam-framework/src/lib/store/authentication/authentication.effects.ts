@@ -1,16 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, concatMap, flatMap, map, mergeMap } from 'rxjs/operators';
-import { User } from '../../models/authentication/user.class';
 import { Message, MessageType, UserMessage } from '../../models/messages/message.class';
-import { AuthenticationService } from '../../services/authentication.service';
+import { AuthenticationService, UserTransformer } from '../../services/authentication.service';
 import { MessageService } from '../../services/message.service';
 import { RxjsStoreHelperService } from '../../services/rxjs-store-helper.service';
 import * as fromDAM from '../../store/index';
+import { IDamUser } from '../../models/authentication/user.class';
+import { DAM_AUTH_USER_TRANSFORMER } from '../../injection-token';
 import {
   AuthenticationActions,
   AuthenticationActionTypes,
@@ -19,13 +20,7 @@ import {
   LoginPageRequest,
   LoginSuccess,
   LogoutSuccess,
-  ResetPasswordRequest,
-  ResetPasswordRequestFailure,
-  ResetPasswordRequestSuccess,
   UpdateAuthStatus,
-  UpdatePasswordRequest,
-  UpdatePasswordRequestFailure,
-  UpdatePasswordRequestSuccess,
 } from './authentication.actions';
 
 @Injectable()
@@ -40,8 +35,8 @@ export class AuthenticationEffects {
         blockUI: false,
       }));
       return this.authService.login(action.payload.username, action.payload.password).pipe(
-        map((message: Message<User>) => {
-          return new LoginSuccess(message.data);
+        map((message: Message<any>) => {
+          return new LoginSuccess(this.userTransformer(message.data));
         }),
         catchError((error: HttpErrorResponse) => {
           return of(new LoginFailure(error));
@@ -56,10 +51,10 @@ export class AuthenticationEffects {
     mergeMap((action: BootstrapCheckAuthStatus) => {
       return this.authService.checkAuthStatus();
     }),
-    map((user: User) => {
+    map((user: any) => {
       return new UpdateAuthStatus({
         isLoggedIn: true,
-        userInfo: user,
+        userInfo: this.userTransformer(user),
       });
     }),
     catchError((error: string) => {
@@ -108,42 +103,7 @@ export class AuthenticationEffects {
       });
     }),
   );
-  // Triggered when a reset password request is made
-  @Effect()
-  resetPasswordRequest$ = this.actions$.pipe(
-    ofType(AuthenticationActionTypes.ResetPasswordRequest),
-    concatMap((action: ResetPasswordRequest) => {
-      this.store.dispatch(new fromDAM.TurnOnLoader({
-        blockUI: true,
-      }));
-      return this.authService.requestChangePassword(action.payload).pipe(
-        map((response: Message<string>) => {
-          return new ResetPasswordRequestSuccess(response);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          return of(new ResetPasswordRequestFailure(error));
-        }),
-      );
-    }),
-  );
-  // Triggered when a update password request is made
-  @Effect()
-  updatePasswordRequest$ = this.actions$.pipe(
-    ofType(AuthenticationActionTypes.UpdatePasswordRequest),
-    concatMap((action: UpdatePasswordRequest) => {
-      this.store.dispatch(new fromDAM.TurnOnLoader({
-        blockUI: true,
-      }));
-      return this.authService.updatePassword(action.payload.token, action.payload.password).pipe(
-        map((response: Message<string>) => {
-          return new UpdatePasswordRequestSuccess(response);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          return of(new UpdatePasswordRequestFailure(error));
-        }),
-      );
-    }),
-  );
+
   @Effect()
   loginSuccess$ = this.actions$.pipe(
     ofType(AuthenticationActionTypes.LoginSuccess),
@@ -181,58 +141,6 @@ export class AuthenticationEffects {
       },
     }),
   );
-  @Effect()
-  updatePasswordRequestFailure$ = this.actions$.pipe(
-    ofType(AuthenticationActionTypes.UpdatePasswordRequestFailure),
-    this.helper.finalize<UpdatePasswordRequestFailure, HttpErrorResponse>({
-      clearMessages: true,
-      turnOffLoader: true,
-      message: (action: UpdatePasswordRequestFailure): HttpErrorResponse => {
-        return action.payload;
-      },
-    }),
-  );
-
-  // ---------------- UPDATE PASSWORD SUCCESS/FAILURE ----------------
-  @Effect()
-  updatePasswordRequestSuccess$ = this.actions$.pipe(
-    ofType(AuthenticationActionTypes.UpdatePasswordRequestSuccess),
-    this.helper.finalize<UpdatePasswordRequestSuccess, Message>({
-      clearMessages: true,
-      turnOffLoader: true,
-      message: (action: UpdatePasswordRequestSuccess): Message => {
-        return action.payload;
-      },
-      handler: (action: UpdatePasswordRequestSuccess): Action[] => {
-        this.router.navigate([this.authService.getLoginPageRedirectUrl()]);
-        return [];
-      },
-    }),
-  );
-  @Effect()
-  resetPasswordRequestFailure$ = this.actions$.pipe(
-    ofType(AuthenticationActionTypes.ResetPasswordRequestFailure),
-    this.helper.finalize<ResetPasswordRequestFailure, HttpErrorResponse>({
-      clearMessages: true,
-      turnOffLoader: true,
-      message: (action: ResetPasswordRequestFailure): HttpErrorResponse => {
-        return action.payload;
-      },
-    }),
-  );
-
-  // ---------------- RESET PASSWORD SUCCESS/FAILURE ----------------
-  @Effect()
-  resetPasswordRequestSuccess$ = this.actions$.pipe(
-    ofType(AuthenticationActionTypes.ResetPasswordRequestSuccess),
-    this.helper.finalize<ResetPasswordRequestSuccess, Message>({
-      clearMessages: true,
-      turnOffLoader: true,
-      message: (action: ResetPasswordRequestSuccess): Message => {
-        return action.payload;
-      },
-    }),
-  );
 
   constructor(
     private actions$: Actions<AuthenticationActions>,
@@ -240,6 +148,7 @@ export class AuthenticationEffects {
     private router: Router,
     private message: MessageService,
     private authService: AuthenticationService,
+    @Inject(DAM_AUTH_USER_TRANSFORMER) private userTransformer: UserTransformer<any, IDamUser>,
     private helper: RxjsStoreHelperService,
   ) {
   }

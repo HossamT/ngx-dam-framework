@@ -51,7 +51,6 @@ export class AuthenticationMockService extends AuthenticationService {
   checkAuthStatus(): Observable<User> {
     return this.storage.get('loggedIn').pipe(
       flatMap((value) => {
-        console.log(value);
         if (value) {
           return this.storage.get<User>('user') as Observable<User>;
         } else {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LoginRequest } from '../../../store/authentication/authentication.actions';
 
@@ -11,6 +11,8 @@ export class LoginFormComponent implements OnInit {
 
   @Output() authenticate: EventEmitter<LoginRequest>;
   loginForm: FormGroup;
+  @Input()
+  forgotPasswordUrl: string;
 
   constructor() {
     this.authenticate = new EventEmitter<LoginRequest>();

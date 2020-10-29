@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { IAuthenticationState } from '../../models/authentication/state';
-import { User } from '../../models/authentication/user.class';
+import { IDamUser } from '../../models/authentication/user.class';
 
 export const authenticationFeatureName = 'damf-authentication';
 export const selectAuth = createFeatureSelector<IAuthenticationState>(authenticationFeatureName);
@@ -23,7 +23,7 @@ export const selectUserInfo = createSelector(
 
 export const selectUsername = createSelector(
   selectUserInfo,
-  (user: User) => {
+  (user: IDamUser) => {
     if (user) {
       return user.username;
     } else {
@@ -34,9 +34,9 @@ export const selectUsername = createSelector(
 
 export const selectAuthorities = createSelector(
   selectUserInfo,
-  (user: User) => {
+  (user: IDamUser) => {
     if (user) {
-      return user.authorities;
+      return user.roles;
     } else {
       return [];
     }
@@ -44,8 +44,8 @@ export const selectAuthorities = createSelector(
 );
 
 export const selectIsAdmin = createSelector(
-  selectAuthorities,
-  (authorities: string[]) => {
-    return authorities.indexOf('ADMIN') !== -1;
+  selectUserInfo,
+  (user: IDamUser) => {
+    return user && user.administrator;
   },
 );

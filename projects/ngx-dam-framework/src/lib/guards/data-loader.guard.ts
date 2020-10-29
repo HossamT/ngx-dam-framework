@@ -16,8 +16,6 @@ export class DataLoaderGuard implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
-    console.log('CAN ACTIVATE DATA LOADER WAITING FOR ' + route.data.successAction);
-
     const routeParam: string = route.data.routeParam;
     const LoadAction: Type<Action> = route.data.loadAction;
     const SuccessAction: string = route.data.successAction;

@@ -15,7 +15,7 @@ export function loaderReducer(state = loaderInitialState, action: LoaderActions)
 
       };
     case LoaderActionTypes.TurnOffLoader:
-      const loading = state.loading - 1;
+      const loading = action.force ? 0 : state.loading - 1;
       return {
         isLoading: loading > 0,
         uiIsBlocked: (loading > 0) && state.uiIsBlocked,

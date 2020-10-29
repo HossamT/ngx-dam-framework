@@ -26,8 +26,6 @@ export const selectPostEntities = createSelector(
 export const selectPostById = createSelector(
   selectPostEntities,
   (dictionary: Dictionary<IPost>, props: { id: string }) => {
-    console.log(dictionary);
-    console.log(props.id);
     return dictionary[props.id];
   },
 );

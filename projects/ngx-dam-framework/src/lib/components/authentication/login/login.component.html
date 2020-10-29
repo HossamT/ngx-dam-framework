@@ -3,7 +3,7 @@
     <p-card header="Login">
       <hr>
       <dam-alerts-container></dam-alerts-container>
-      <dam-login-form (authenticate)="authenticate($event)"></dam-login-form>
+      <dam-login-form (authenticate)="authenticate($event)" [forgotPasswordUrl]="forgotPasswordUrl"></dam-login-form>
     </p-card>
   </div>
 </div>

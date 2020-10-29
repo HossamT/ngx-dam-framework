@@ -25,16 +25,16 @@ import { DamSaveButtonComponent } from './components/data-widget/dam-save-button
 import { DamSideBarToggleComponent } from './components/data-widget/dam-side-bar-toggle/dam-side-bar-toggle.component';
 import { DamWidgetContainerComponent } from './components/data-widget/dam-widget-container/dam-widget-container.component';
 import { ConfirmDialogComponent } from './components/fragments/confirm-dialog/confirm-dialog.component';
-import { AuthenticatedGuard, NotAuthenticatedGuard } from './guards/auth-guard.guard';
+import { AuthenticatedGuard, NotAuthenticatedGuard, UserPredicateGuard } from './guards/auth-guard.guard';
 import { DataLoaderGuard } from './guards/data-loader.guard';
 import { EditorActivateGuard } from './guards/editor-activate.guard';
 import { EditorDeactivateGuard } from './guards/editor-deactivate.guard';
 import { AuthInterceptor } from './guards/logout-interceptor.service';
-import { NewPasswordResolver } from './guards/new-password.resolver';
+import { TokenValidGuard } from './guards/token-valid.resolver';
 import { WidgetDeactivateGuard } from './guards/widget-deactivate.guard';
 import { WidgetSetupGuard } from './guards/widget-setup.guard';
-import { DAM_AUTH_CONFIG, DEFAULT_MESSAGE_OPTION } from './injection-token';
-import { AuthenticationService, IAuthenticationURL } from './services/authentication.service';
+import { DAM_AUTH_CONFIG, DEFAULT_MESSAGE_OPTION, DAM_AUTH_USER_TRANSFORMER } from './injection-token';
+import { AuthenticationService, IAuthenticationConfig, UserTransformer } from './services/authentication.service';
 import { MessageService } from './services/message.service';
 import { AuthenticationEffects } from './store/authentication/authentication.effects';
 import * as fromAuthReducer from './store/authentication/authentication.reducer';
@@ -50,6 +50,7 @@ import * as fromRouterSelector from './store/router/router.selectors';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BlockUIModule } from 'ng-block-ui';
 import { DamMainComponent } from './components/data-widget/main/main.component';
+import { IDamUser } from './models/authentication/user.class';
 
 @NgModule({
   declarations: [
@@ -176,6 +177,7 @@ export class DamMessagesModule {
 })
 export class DamLoaderModule { }
 
+export const DEFAULT_USER_TRANSFORM = <T extends IDamUser>(user: any) => user as T;
 @NgModule({
   declarations: [
     LoginComponent,
@@ -207,31 +209,40 @@ export class DamLoaderModule { }
 })
 export class DamAuthenticationModule {
 
-  static forRootUsingUrl(urls: IAuthenticationURL): ModuleWithProviders<DamAuthenticationModule> {
+  static forRootUsingUrl<E extends any, T extends IDamUser>(
+    urls: IAuthenticationConfig,
+    transformer: UserTransformer<E, T> = DEFAULT_USER_TRANSFORM): ModuleWithProviders<DamAuthenticationModule> {
     return {
       ngModule: DamAuthenticationModule,
       providers: [
         AuthenticationService,
-        NewPasswordResolver,
+        TokenValidGuard,
         AuthenticatedGuard,
         NotAuthenticatedGuard,
+        UserPredicateGuard,
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: DAM_AUTH_CONFIG, useValue: urls },
+        { provide: DAM_AUTH_USER_TRANSFORMER, useValue: transformer },
       ],
     };
   }
 
-  static forRootUsingService<T extends AuthenticationService>(service: Type<T>): ModuleWithProviders<DamAuthenticationModule> {
+  static forRootUsingService<T extends AuthenticationService, E extends any, F extends IDamUser>(
+    service: Type<T>,
+    transformer: UserTransformer<E, F> = DEFAULT_USER_TRANSFORM): ModuleWithProviders<DamAuthenticationModule> {
     return {
       ngModule: DamAuthenticationModule,
       providers: [
         { provide: AuthenticationService, useClass: service },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: DAM_AUTH_CONFIG, useValue: {} },
-        NewPasswordResolver,
+        { provide: DAM_AUTH_USER_TRANSFORMER, useValue: transformer },
+        TokenValidGuard,
         AuthenticatedGuard,
         NotAuthenticatedGuard,
+        UserPredicateGuard,
       ],
     };
   }
 }
+

@@ -1,4 +1,5 @@
-export class User {
-  constructor(readonly username: string, readonly authorities: string[]) {
-  }
+export interface IDamUser {
+  username: string;
+  roles: string[];
+  administrator: boolean;
 }

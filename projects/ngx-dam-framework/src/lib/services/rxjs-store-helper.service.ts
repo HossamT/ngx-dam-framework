@@ -2,8 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
-import { forkJoin, Observable, ObservableInput, of, from, Subject } from 'rxjs';
-import { filter, flatMap, mergeMap, take, catchError, toArray, tap } from 'rxjs/operators';
+import { forkJoin, Observable, ObservableInput, of, from, concat } from 'rxjs';
+import { filter, flatMap, mergeMap, take, catchError, toArray, tap, endWith } from 'rxjs/operators';
 import { Message, UserMessage, IUserMessageOptions } from '../models/messages/message.class';
 import * as fromDAM from '../store/index';
 import { ClearAll } from '../store/messages/messages.actions';
@@ -55,11 +55,10 @@ export class RxjsStoreHelperService {
     }
   }
 
-  // tslint:disable-next-line: cognitive-complexity
   getMessageAndHandle<T>(
     store: Store<any>,
     call: () => Observable<Message<T>>,
-    success: (message: Message<T>) => Action[],
+    success: (message: Message<T>) => Observable<Action>,
     error?: (error) => Action[],
     options?: {
       loader: boolean,
@@ -74,10 +73,9 @@ export class RxjsStoreHelperService {
     }
     return call().pipe(
       flatMap((message) => {
-        return [
-          ...success(message),
-          this.messageService.messageToAction(message, options ? options.messageOptions : undefined),
-        ];
+        return concat(success(message).pipe(
+          endWith(this.messageService.messageToAction(message, options ? options.messageOptions : undefined))
+        ));
       }),
       catchError((e) => {
         return from([

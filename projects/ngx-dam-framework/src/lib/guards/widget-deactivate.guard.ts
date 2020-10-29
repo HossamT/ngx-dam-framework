@@ -18,8 +18,6 @@ export class WidgetDeactivateGuard implements CanDeactivate<DamWidgetContainerCo
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot,
   ) {
-    console.log('CAN DEACTIVATE Widget [' + component.activeWidget.instance.widgetId + ']');
-
     // CLOSE WIDGET
     component.closeWidget();
 

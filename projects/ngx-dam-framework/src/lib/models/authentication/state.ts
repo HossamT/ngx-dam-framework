@@ -1,8 +1,8 @@
-import { User } from './user.class';
+import { IDamUser } from './user.class';
 
 export interface IAuthenticationState {
   isLoggedIn: boolean;
-  userInfo: User;
+  userInfo: IDamUser;
 }
 
 export const emptyUserState: IAuthenticationState = {

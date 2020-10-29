@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, tap, flatMap } from 'rxjs/operators';
 import { IAuthenticationState } from '../models/authentication/state';
 import { AuthenticationService } from '../services/authentication.service';
 import * as fromAuth from '../store/authentication/index';
@@ -52,6 +52,41 @@ export class NotAuthenticatedGuard implements CanActivate {
             this.router.navigate([this.authService.getUnprotectedRedirectUrl()]);
           }
           return !logged;
+        }),
+      );
+  }
+}
+@Injectable({
+  providedIn: 'root',
+})
+export class UserPredicateGuard implements CanActivate {
+  constructor(
+    private store: Store<IAuthenticationState>,
+    private authService: AuthenticationService,
+    private router: Router) {
+  }
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean> {
+    const predicate = route.data.predicate || (() => true);
+    return this.store.select(fromAuth.selectIsLoggedIn)
+      .pipe(
+        flatMap((logged) => {
+          if (logged) {
+            return this.store.select(fromAuth.selectUserInfo).pipe(
+              map((user) => {
+                if (user && predicate(user)) {
+                  return true;
+                } else {
+                  this.router.navigate([this.authService.getUnprotectedRedirectUrl()]);
+                  return false;
+                }
+              })
+            )
+          } else {
+            return of(false);
+          }
         }),
       );
   }

@@ -60,7 +60,6 @@ export function reducer(state = initialState, action: DamActions): IDamDataModel
       };
 
     case DamActionTypes.LoadPayloadData:
-      console.log('LOAD PAYLOAD DATA');
       return {
         ...state,
         payload: {

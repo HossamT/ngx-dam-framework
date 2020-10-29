@@ -60,7 +60,7 @@ export class EditorDeactivateGuard implements CanDeactivate<DamAbstractEditorCom
             );
           } else {
             return of(true).pipe(
-              tap(() => component.onDeactivate()),
+              tap(() => component ? component.onDeactivate() : null),
             );
           }
         }

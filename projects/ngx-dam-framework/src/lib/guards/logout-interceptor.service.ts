@@ -7,7 +7,7 @@ import { catchError, flatMap, take } from 'rxjs/operators';
 import { TimeoutLoginDialogComponent } from '../components/authentication/timeout-login-dialog/timeout-login-dialog.component';
 import { DAM_AUTH_CONFIG } from '../injection-token';
 import { MessageType, UserMessage } from '../models/messages/message.class';
-import { AuthenticationService, IAuthenticationURL } from '../services/authentication.service';
+import { AuthenticationService, IAuthenticationConfig } from '../services/authentication.service';
 import { LoginFailure, LoginSuccess } from '../store/authentication/authentication.actions';
 import * as fromAuth from '../store/authentication/index';
 import { AddMessage, ClearAll } from '../store/messages/messages.actions';
@@ -18,7 +18,7 @@ export class AuthInterceptor implements HttpInterceptor {
   private skipURL;
 
   constructor(
-    @Inject(DAM_AUTH_CONFIG) private authConfig: IAuthenticationURL,
+    @Inject(DAM_AUTH_CONFIG) private authConfig: IAuthenticationConfig,
     public auth: AuthenticationService,
     private store: Store<any>,
     private http: HttpClient,
@@ -32,7 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       catchError((err) => {
-        if (!this.skipURL.includes(request.url) && (err.status === 403 || err.status === 401)) {
+        if (!this.skipURL.includes(request.url) && (this.authConfig.sessionTimeoutStatusCodes.includes(err.status))) {
           return this.store.select(fromAuth.selectIsLoggedIn).pipe(
             take(1),
             flatMap((loggedIn) => {

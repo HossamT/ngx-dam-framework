@@ -14,6 +14,7 @@ import { ClearAll } from '../../../store/messages/messages.actions';
 export class LoginComponent implements OnInit {
 
   goTo: string;
+  forgotPasswordUrl: string;
 
   constructor(
     private store: Store<IAuthenticationState>,
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
   ) {
     this.goTo = this.authService.getLoginSuccessRedirectUrl();
+    this.forgotPasswordUrl = this.authService.getForgotPasswordUrl();
   }
 
   authenticate(request: fromAuth.LoginRequest) {

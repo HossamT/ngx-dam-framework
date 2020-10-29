@@ -16,7 +16,7 @@ export * from './lib/guards/data-loader.guard';
 export * from './lib/guards/editor-activate.guard';
 export * from './lib/guards/editor-deactivate.guard';
 export * from './lib/guards/logout-interceptor.service';
-export * from './lib/guards/new-password.resolver';
+export * from './lib/guards/token-valid.resolver';
 export * from './lib/guards/widget-deactivate.guard';
 export * from './lib/guards/widget-setup.guard';
 

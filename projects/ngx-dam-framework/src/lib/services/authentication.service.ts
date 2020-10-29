@@ -2,28 +2,30 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DAM_AUTH_CONFIG } from '../injection-token';
-import { User } from '../models/authentication/user.class';
+import { IDamUser } from '../models/authentication/user.class';
 import { Message } from '../models/messages/message.class';
 
-export interface IAuthenticationURL {
+export interface IAuthenticationConfig {
   api: {
     login: string,
-    resetPassword: string,
-    validateToken: string,
-    updatePassword: string,
     checkAuthStatus: string,
     logout: string,
+    checkLinkToken: string,
   };
+  forgotPasswordUrl: string;
   loginPageRedirectUrl: string;
   unprotectedRedirectUrl: string;
   loginSuccessRedirectUrl: string;
+  sessionTimeoutStatusCodes: number[];
 }
+
+export type UserTransformer<E, T extends IDamUser> = (user: E) => T;
 
 @Injectable()
 export class AuthenticationService {
 
   constructor(
-    @Inject(DAM_AUTH_CONFIG) private authConfig: IAuthenticationURL,
+    @Inject(DAM_AUTH_CONFIG) private authConfig: IAuthenticationConfig,
     private http: HttpClient) {
   }
 
@@ -39,27 +41,26 @@ export class AuthenticationService {
     return this.authConfig.loginSuccessRedirectUrl;
   }
 
-  login(username: string, password: string): Observable<Message<User>> {
-    return this.http.post<Message<User>>(this.authConfig.api.login, {
+  getForgotPasswordUrl(): string {
+    return this.authConfig.forgotPasswordUrl;
+  }
+
+  login(username: string, password: string): Observable<Message<any>> {
+    return this.http.post<Message<any>>(this.authConfig.api.login, {
       username,
       password,
     });
   }
 
-  requestChangePassword(email: string): Observable<Message<string>> {
-    return this.http.post<Message<string>>(this.authConfig.api.resetPassword, email);
+  checkLinkToken(token: string, context: any): Observable<Message<any>> {
+    return this.http.post<Message<any>>(this.authConfig.api.checkLinkToken, {
+      token,
+      context,
+    });
   }
 
-  validateToken(token: string): Observable<Message<string>> {
-    return this.http.post<Message<string>>(this.authConfig.api.validateToken, token);
-  }
-
-  updatePassword(token: string, password: string): Observable<Message<string>> {
-    return this.http.post<Message<string>>(this.authConfig.api.updatePassword, { token, password });
-  }
-
-  checkAuthStatus(): Observable<User> {
-    return this.http.get<User>(this.authConfig.api.checkAuthStatus);
+  checkAuthStatus(): Observable<any> {
+    return this.http.get<any>(this.authConfig.api.checkAuthStatus);
   }
 
   logout(): Observable<Message<any>> {

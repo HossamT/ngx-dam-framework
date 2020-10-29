@@ -17,7 +17,7 @@ export class TurnOnLoader implements Action {
 export class TurnOffLoader implements Action {
   readonly type = LoaderActionTypes.TurnOffLoader;
 
-  constructor() {
+  constructor(readonly force: boolean = false) {
   }
 }
 

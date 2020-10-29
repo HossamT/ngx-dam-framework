@@ -29,10 +29,8 @@ export class EditorActivateGuard implements CanActivate {
     const redirectTo: string[] = route.data['redirectTo'] || [];
     const EditorAction: CoreType<Action> = route.data['action'];
 
-    console.log('EDITOR CAN ACTIVATE ' + editorMetadata.id);
-
-    if (!editorMetadata || !elementId) {
-      console.error('Editor route must have data attributes editorMetadata and idKey declared');
+    if (!editorMetadata && !elementId) {
+      console.error('Editor route must have data attributes editorMetadata and idKey declared (both or one of)');
       return of(false);
     }
 
@@ -49,7 +47,9 @@ export class EditorActivateGuard implements CanActivate {
           const subject: ReplaySubject<boolean> = new ReplaySubject<boolean>();
           this.actions$.pipe(
             ofType(DamActionTypes.OpenEditor, DamActionTypes.OpenEditorFailure),
-            filter((action: OpenEditor | OpenEditorFailure) => action.payload.id === id),
+            filter((action: OpenEditor | OpenEditorFailure) =>
+              elementId ? action.payload.id === id : action.payload.id === editorMetadata.id
+            ),
             take(1),
             map((action) => {
               switch (action.type) {

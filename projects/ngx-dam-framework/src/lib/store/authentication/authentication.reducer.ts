@@ -7,6 +7,7 @@ export function authenticationReducer(state = emptyUserState, action: Authentica
 
     case AuthenticationActionTypes.UpdateAuthStatus:
       return {
+        statusChecked: action.payload.statusChecked,
         isLoggedIn: action.payload.isLoggedIn,
         userInfo: action.payload.userInfo,
       };

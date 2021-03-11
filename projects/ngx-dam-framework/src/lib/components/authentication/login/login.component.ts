@@ -5,6 +5,7 @@ import { IAuthenticationState } from '../../../models/authentication/state';
 import { AuthenticationService } from '../../../services/authentication.service';
 import * as fromAuth from '../../../store/authentication/index';
 import { ClearAll } from '../../../store/messages/messages.actions';
+import { TurnOffLoader } from '../../../store/loader/loader.actions';
 
 @Component({
   selector: 'dam-login',
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(new ClearAll());
+    this.store.dispatch(new TurnOffLoader(true));
     this.route.queryParams.subscribe(
       (params) => {
         if (params['return']) {

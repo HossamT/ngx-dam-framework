@@ -18,14 +18,16 @@ export class TokenValidGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
     const token = route.data.token(route);
     const context = route.data.context(route);
-    const urlTree = route.data.tokenInvalidUrl(route);
+    const urlTree = route.data.tokenInvalidUrl ? route.data.tokenInvalidUrl(route) : {
+      commands: ['/error'],
+    };
 
     return this.authenticationService.checkLinkToken(token, context).pipe(
       catchError((err: any) => {
         this.store.dispatch(
           this.messageService.actionFromError(err),
         );
-        return of(this.router.createUrlTree(urlTree ? urlTree.commands : ['/error'], urlTree ? urlTree.extras : undefined));
+        return of(this.router.createUrlTree(urlTree.commands, urlTree.extras));
       }),
       mapTo(true)
     );

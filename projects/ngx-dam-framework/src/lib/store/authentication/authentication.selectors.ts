@@ -10,6 +10,14 @@ export const selectIsLoggedIn = createSelector(
   (state: IAuthenticationState) => state.isLoggedIn,
 );
 
+export const selectAuthStatusChecked = createSelector(
+  selectAuth,
+  (state: IAuthenticationState) => {
+    return state.statusChecked;
+  },
+);
+
+
 export const selectUserInfo = createSelector(
   selectAuth,
   (state: IAuthenticationState) => {

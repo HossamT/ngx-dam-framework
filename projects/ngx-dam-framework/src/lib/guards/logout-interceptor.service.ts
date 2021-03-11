@@ -11,6 +11,7 @@ import { AuthenticationService, IAuthenticationConfig } from '../services/authen
 import { LoginFailure, LoginSuccess } from '../store/authentication/authentication.actions';
 import * as fromAuth from '../store/authentication/index';
 import { AddMessage, ClearAll } from '../store/messages/messages.actions';
+import { TurnOffLoader } from '../store/loader/loader.actions';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -43,6 +44,7 @@ export class AuthInterceptor implements HttpInterceptor {
                 this.store.dispatch(new AddMessage(new UserMessage(MessageType.FAILED, 'Login Required')));
               }
 
+              this.store.dispatch(new TurnOffLoader(true));
               const dialogRef = this.dialog.open(TimeoutLoginDialogComponent, { disableClose: true });
               return dialogRef.afterClosed().pipe(
                 flatMap((result: { username: string, password: string }) => {

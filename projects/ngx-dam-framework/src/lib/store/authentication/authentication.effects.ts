@@ -53,12 +53,14 @@ export class AuthenticationEffects {
     }),
     map((user: any) => {
       return new UpdateAuthStatus({
+        statusChecked: true,
         isLoggedIn: true,
         userInfo: this.userTransformer(user),
       });
     }),
     catchError((error: string) => {
       return of(new UpdateAuthStatus({
+        statusChecked: true,
         isLoggedIn: false,
         userInfo: null,
       }));
@@ -85,6 +87,7 @@ export class AuthenticationEffects {
         new fromDAM.TurnOffLoader(),
         this.message.userMessageToAction(new UserMessage(MessageType.WARNING, 'Session timed out')),
         new UpdateAuthStatus({
+          statusChecked: true,
           userInfo: null,
           isLoggedIn: false,
         })];
@@ -98,6 +101,7 @@ export class AuthenticationEffects {
     map(() => {
       this.router.navigate([this.authService.getUnprotectedRedirectUrl()]);
       return new UpdateAuthStatus({
+        statusChecked: true,
         userInfo: null,
         isLoggedIn: false,
       });
@@ -113,6 +117,7 @@ export class AuthenticationEffects {
       handler: (action: LoginSuccess) => {
         return [
           new UpdateAuthStatus({
+            statusChecked: true,
             userInfo: action.payload,
             isLoggedIn: true,
           }),
@@ -131,6 +136,7 @@ export class AuthenticationEffects {
       handler: (action: LoginFailure) => {
         return [
           new UpdateAuthStatus({
+            statusChecked: true,
             userInfo: null,
             isLoggedIn: false,
           }),
